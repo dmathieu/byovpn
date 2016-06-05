@@ -2,13 +2,16 @@
 source /tmp/terraform_config
 
 export DEBIAN_FRONTEND=noninteractive
-apt-get update && apt-get upgrade -y
+
+echo "----------> Running apt-get upgrade"
+apt-get update || exit 1
+apt-get upgrade -y || exit 1
 
 PRIVATE_IP=`wget -q -O - 'http://instance-data/latest/meta-data/local-ipv4'`
 PUBLIC_IP=`wget -q -O - 'http://instance-data/latest/meta-data/public-ipv4'`
 
-
-apt-get install -y openswan xl2tpd
+echo "----------> Installing openswan && xl12tpd"
+apt-get install -y openswan xl2tpd || exit 1
 
 cat > /etc/ipsec.conf <<EOF
 version 2.0
@@ -56,6 +59,7 @@ port = 1701
 ;debug network = yes
 ;debug state = yes
 ;debug tunnel = yes
+logfile /var/log/xl2tpd.log
 
 [lns default]
 ip range = 192.168.42.10-192.168.42.250
@@ -92,7 +96,7 @@ $VPN_USER l2tpd $VPN_PASSWORD *
 $VPN_USER pptpd $VPN_PASSWORD *
 EOF
 
-iptables -t nat -A POSTROUTING -s 192.168.42.0/24 -o eth0 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 192.168.42.0/24 -o eth0 -j MASQUERADE || exit 1
 
 echo 1 > /proc/sys/net/ipv4/ip_forward
 iptables-save > /etc/iptables.rules
@@ -110,7 +114,7 @@ chmod a+x /etc/network/if-pre-up.d/iptablesload
 /etc/init.d/xl2tpd restart
 
 #VPN 2 - Setup PPTP Server
-apt-get install pptpd -y
+apt-get install pptpd -y || exit 1
 echo "localip 10.0.0.1" >> /etc/pptpd.conf
 echo "remoteip 10.0.0.100-200" >> /etc/pptpd.conf
 echo "ms-dns 8.8.8.8" >> /etc/ppp/pptpd-options
