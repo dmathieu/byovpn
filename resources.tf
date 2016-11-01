@@ -36,20 +36,6 @@ resource "aws_security_group" "byovpn" {
     protocol = "udp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
-  ingress {
-    from_port = 1723
-    to_port = 1723
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port = 1723
-    to_port = 1723
-    protocol = "udp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
 }
 
 resource "aws_key_pair" "byovpn" {
