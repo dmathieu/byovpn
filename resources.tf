@@ -40,7 +40,7 @@ resource "aws_security_group" "byovpn" {
 
 resource "aws_key_pair" "byovpn" {
   key_name = "byovpn"
-  public_key = "${file("~/.ssh/id_rsa.pub")}"
+  public_key = "${file("id_rsa.pub")}"
 }
 
 resource "aws_instance" "byovpn" {
@@ -55,7 +55,7 @@ resource "aws_instance" "byovpn" {
 
   connection {
     user = "ubuntu"
-    private_key = "${file("~/.ssh/id_rsa")}"
+    private_key = "${file("id_rsa")}"
   }
 
   provisioner "file" {
