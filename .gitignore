@@ -2,6 +2,7 @@
 *.tfstate
 *.tfstate.backup
 *.pem
+.terraform
 
 id_rsa
 id_rsa.pub
